@@ -2,50 +2,57 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct node
-{
-    int nodeData;
+#define MAX_LINES 50
+#define MAX_LENGTH 50
+
+struct node {
+    int phoneNumber;
     struct node *leftChild, *rightChild;
 };
-
-struct node* newTree(int data)
+ 
+struct node* newNode(int newNumber)
 {
     struct node* temp = (struct node*)malloc(sizeof(struct node));
-    temp->nodeData = data;
+    temp->phoneNumber = newNumber;
     temp->leftChild = temp->rightChild = NULL;
     return temp;
 }
-
+ 
 void inorder(struct node* root)
 {
-    if (root != NULL)
+    if (root != NULL) 
     {
         inorder(root->leftChild);
-        printf("%d\n", root->nodeData);
+        printf("%d \n", root->phoneNumber);
         inorder(root->rightChild);
     }
 }
+ 
 
-struct node* insert(struct node* node, int data)
+struct node* insert(struct node* node, int newNumber)
 {
     if (node == NULL)
     {
-        return newTree(data);
+        return newNode(newNumber);
     }
 
-    if (data < node->nodeData)
+    if (newNumber < node->phoneNumber)
     {
-        node->leftChild = insert(node->leftChild, data);
-    } else if (data > node->nodeData)
-    {
-        node->rightChild = insert(node->rightChild, data);
+        node->leftChild = insert(node->leftChild, newNumber);
     }
+    else if (newNumber > node->phoneNumber)
+    {
+        node->rightChild = insert(node->rightChild, newNumber);
+    }
+
+    return node;
 }
 
-int main()
+int main(void)
 {
-    char line[50];
+    char contents[MAX_LINES][MAX_LENGTH];
     char fileName[20];
+    int line = 0;
     FILE *fptr;
 
     printf("\n\n Read Phonebook Data & Store using a Binary Search Tree :\n");
@@ -60,11 +67,25 @@ int main()
         printf("file cannot be opened, make sure file is in the same directory as program \n");
         exit(0);
     }
-    else
+
+    while (!feof(fptr) && !ferror(fptr))
     {
-        
+        if (fgets(contents[line], MAX_LENGTH, fptr) != NULL)
+        {
+            line++;
+        }
+    }
+    
+
+    struct node* root = NULL;
+    root = insert(root, atoi(contents[0]));
+
+    for (int i = 1; i < line; i++)
+    {
+        insert(root, atoi(contents[i]));
     }
 
+    inorder(root);
 
     return 0;
 };
