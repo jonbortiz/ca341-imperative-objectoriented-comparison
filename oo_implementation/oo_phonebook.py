@@ -22,14 +22,14 @@ def insert(root, name, address, number):               # function to insert node
             root.left = insert(root.left, name, address, number)
     return root
 
-def search_number(root, number):                                       # function to search for contact on binary tree
+def search_contact(root, number):                                       # function to search for contact on binary tree
     if root is None or root.data == number: 
         return root.name, root.address                                 # returns the name and address linked with phone number given in function 
     
     if root.data < number:                                             # if not found yet, function is called again to look at left or right node depending on how it is sorted
-        return search_number(root.right, number)
-    return search_number(root.left, number)
-
+        return search_contact(root.right, number)
+    return search_contact(root.left, number)
+        
 def read_file():                                                        # using function to read our file which has all of our contacts from phonebook stored
     contacts = {}
     with open('details.txt') as f:
@@ -62,7 +62,7 @@ def main():
         if(command == "search"):                                        # searches contact name and address matching phone number
             number = int(input("Search number: "))
             try:  
-                result = search_number(root, number)
+                result = search_contact(root, number)
                 print("Name: {} \nAddress: {}".format(result[0], result[1]))
             except AttributeError:
                 print("{} not found in phonebook".format(number))
