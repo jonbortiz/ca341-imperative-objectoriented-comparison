@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINES 60
-#define MAX_LENGTH 60
-
 
 struct node {
     char contactName[20];
@@ -103,6 +100,40 @@ void inorder(struct node* root)
     }
 }
 
+void searchName(struct node* root, char *value)
+{
+    if (root != NULL)
+    {
+        searchName(root->leftChild, value);
+        if (strcmp(root->contactName, value) == 0)
+        {
+            printf("Found Contact:\nName: %s\nAddress: %s\nPhone Number: %s\n",
+            root->contactName, root->contactAddress, root->phoneNumber);
+        }
+        searchName(root->rightChild, value);
+    }
+}
+
+void searchNumber(struct node* root, int value)
+{
+    if (root != NULL)
+    {
+        if (atoi(root->phoneNumber) == value)
+        {
+            printf("Found Contact:\nName: %s\nAddress: %s\nPhone Number: %s\n",
+            root->contactName, root->contactAddress, root->phoneNumber);
+        } 
+        else if (value < atoi(root->phoneNumber))
+        {
+            searchNumber(root->leftChild, value);
+        } 
+        else
+        {
+            searchNumber(root->rightChild, value);
+        }
+    }
+}
+
 int main(void)
 {
 
@@ -110,6 +141,7 @@ int main(void)
     char name[20];
     char address[20];
     char phoneNumber[20];
+    char command[10];
     int line = 0;
     FILE *fptr;
     int itemFlag = 0;
@@ -175,14 +207,53 @@ int main(void)
             i++;
             c = fgetc(fptr);
         }
-        
 
         fclose(fptr);
     }
-    inorder(root);
-    delete(root, 864862149);
-    printf("\n");
-    inorder(root);
+    
+    while(strcmp(command, "quit") != 0)
+    {   
+        printf("\nEnter command: \n");
+        scanf("%s", command);
+
+        if (strcmp(command, "inorder") == 0)
+        {
+            inorder(root);
+        } 
+        else if (strcmp(command, "delete") == 0)
+        {
+            char deleteNumber[20];
+            printf("What number would you like to delete?: ");
+            scanf("%s", deleteNumber);
+            delete(root, atoi(deleteNumber));
+        }
+        else if (strcmp(command, "search") == 0)
+        {
+            char searchValue[20];
+            printf("What number/name would you like to search?: ");
+            scanf("%s", searchValue);
+            if (atoi(searchValue) == 0)
+            {
+                searchName(root, searchValue);
+            } else {
+                searchNumber(root, atoi(searchValue));
+            }
+        }
+        else if (strcmp(command, "add") == 0)
+        {
+            printf("\nInserting New Contact\n");
+            printf("Name: ");
+            scanf("%s", name);
+            printf("Address: ");
+            scanf("%s", address);
+            printf("Phone Number: ");
+            scanf("%s", phoneNumber);
+            insert(root, phoneNumber, name, address);
+            memset(name, 0, sizeof(name));
+            memset(address, 0, sizeof(address));
+            memset(phoneNumber, 0, sizeof(phoneNumber));
+        }
+    }
 
     return 0;
 };
