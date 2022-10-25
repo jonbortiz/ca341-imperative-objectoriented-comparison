@@ -119,66 +119,60 @@ int main(void)
 
     printf("\n\n Read Phonebook Data & Store using a Binary Search Tree :\n");
     printf("-------------------------------------------------\n");
-    printf("Would you like to import tree data?\nAnswer: 'yes' or 'no'\n");
+    printf(" Input the filename to be opened: ");
     scanf("%s", fileName);
-    if (strcmp(fileName, "yes")==0)
+
+    fptr = fopen(fileName, "r");
+
+    if (fptr == NULL)
     {
-        printf(" Input the filename to be opened: ");
-        scanf("%s", fileName);
+        printf("file cannot be opened, make sure file is in the same directory as program \n");
+        exit(0);
+    }
 
-        fptr = fopen(fileName, "r");
-
-        if (fptr == NULL)
+    c = fgetc(fptr);
+    while (c != EOF)
+    {
+        if (c == '\n')
         {
-            printf("file cannot be opened, make sure file is in the same directory as program \n");
-            exit(0);
-        }
+            itemFlag = 0;
+            i = 0;
+            if (firstNodeFlag == 0)
+                {
+                    firstNodeFlag = 1;
+                    root = insert(root, phoneNumber, name, address);
+                }
 
-        c = fgetc(fptr);
-        while (c != EOF)
-        {
-            if (c == '\n')
-            {
-                itemFlag = 0;
-                i = 0;
-                if (firstNodeFlag == 0)
-                    {
-                        firstNodeFlag = 1;
-                        root = insert(root, phoneNumber, name, address);
-                    }
-
-                insert(root, phoneNumber, name, address);
-                memset(name, 0, sizeof(name));
-                memset(address, 0, sizeof(address));
-                memset(phoneNumber, 0, sizeof(phoneNumber));
-                c = fgetc(fptr);
-            }
-
-            if (c == ' ')
-            {
-                itemFlag++;
-                i = 0;
-                c = fgetc(fptr);
-            }
-
-            if (itemFlag == 0)
-            {
-                name[i] = c;
-            } else if (itemFlag == 1)
-            {
-                address[i] = c;
-            } else if (itemFlag == 2)
-            {
-                phoneNumber[i] = c;
-            }
-
-            i++;
+            insert(root, phoneNumber, name, address);
+            memset(name, 0, sizeof(name));
+            memset(address, 0, sizeof(address));
+            memset(phoneNumber, 0, sizeof(phoneNumber));
             c = fgetc(fptr);
         }
-        
 
-        fclose(fptr);
+        if (c == ' ')
+        {
+            itemFlag++;
+            i = 0;
+            c = fgetc(fptr);
+        }
+
+        if (itemFlag == 0)
+        {
+            name[i] = c;
+        } else if (itemFlag == 1)
+        {
+            address[i] = c;
+        } else if (itemFlag == 2)
+        {
+            phoneNumber[i] = c;
+        }
+
+        i++;
+        c = fgetc(fptr);
     }
+
+    fclose(fptr);
     inorder(root);
     delete(root, 864862149);
     printf("\n");

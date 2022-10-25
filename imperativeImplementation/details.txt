@@ -1,4 +1,4 @@
-susan, Dublin, 0867450643
-john, Cork, 0858346057
-david, Galway, 0864862149
-katie, Dublin, 0835842926
+Susan Dublin 0867450643
+John Cork 0858346057
+David Galway 0864862149
+Katie Dublin 0835842926
