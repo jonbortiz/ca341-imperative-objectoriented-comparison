@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINES 60
-#define MAX_LENGTH 60
+#define MAX_BUFFER 1024
+#define MAX_ARGS 64
+#define SEPARATORS " \t\n"
 
 
 struct node {
@@ -103,6 +104,13 @@ void inorder(struct node* root)
     }
 }
 
+void tokeniseInput(char ** args, char ** arg, char *buff)
+{
+    arg = args;
+    *arg++ = strtok(buff, SEPARATORS);
+    while ((*arg++ = strtok(NULL, SEPARATORS)));
+}
+
 int main(void)
 {
 
@@ -110,75 +118,103 @@ int main(void)
     char name[20];
     char address[20];
     char phoneNumber[20];
-    int line = 0;
     FILE *fptr;
     int itemFlag = 0;
     int firstNodeFlag = 0;
     int i = 0;
     struct node* root = NULL;
+    char buff[MAX_BUFFER];
+    char * args[MAX_ARGS];
+    char ** arg;
+    char *prompt = "==> ";
 
     printf("\n\n Read Phonebook Data & Store using a Binary Search Tree :\n");
     printf("-------------------------------------------------\n");
-    printf("Would you like to import tree data?\nAnswer: 'yes' or 'no'\n");
-    scanf("%s", fileName);
-    if (strcmp(fileName, "yes")==0)
+
+
+    while(!feof(stdin))
     {
-        printf(" Input the filename to be opened: ");
-        scanf("%s", fileName);
+        fputs(prompt, stdout);
 
-        fptr = fopen(fileName, "r");
-
-        if (fptr == NULL)
+        if(fgets(buff, MAX_BUFFER, stdin)) 
         {
-            printf("file cannot be opened, make sure file is in the same directory as program \n");
-            exit(0);
+            tokeniseInput(args, arg, buff);
+            if (strcmp(args[0], "quit")==0)
+            {
+                printf("Exiting the program...\n");
+                break;
+            }
+
+            if (strcmp(args[0], "read")==0)
+            {
+
+            }
+
+            arg = args;
+            while (*arg) 
+            {
+                fprintf(stdout,"%s ",*arg++);
+                fputs ("\n", stdout);
+            }
         }
+    }
 
-        c = fgetc(fptr);
-        while (c != EOF)
+
+
+    printf(" Input the filename to be opened: ");
+    scanf("%s", fileName);
+
+    fptr = fopen(fileName, "r");
+
+    if (fptr == NULL)
+    {
+        printf("file cannot be opened, make sure file is in the same directory as program \n");
+        exit(0);
+    }
+
+    c = fgetc(fptr);
+    while (c != EOF)
+    {
+        if (c == '\n')
         {
-            if (c == '\n')
-            {
-                itemFlag = 0;
-                i = 0;
-                if (firstNodeFlag == 0)
-                    {
-                        firstNodeFlag = 1;
-                        root = insert(root, phoneNumber, name, address);
-                    }
+            itemFlag = 0;
+            i = 0;
+            if (firstNodeFlag == 0)
+                {
+                    firstNodeFlag = 1;
+                    root = insert(root, phoneNumber, name, address);
+                }
 
-                insert(root, phoneNumber, name, address);
-                memset(name, 0, sizeof(name));
-                memset(address, 0, sizeof(address));
-                memset(phoneNumber, 0, sizeof(phoneNumber));
-                c = fgetc(fptr);
-            }
-
-            if (c == ' ')
-            {
-                itemFlag++;
-                i = 0;
-                c = fgetc(fptr);
-            }
-
-            if (itemFlag == 0)
-            {
-                name[i] = c;
-            } else if (itemFlag == 1)
-            {
-                address[i] = c;
-            } else if (itemFlag == 2)
-            {
-                phoneNumber[i] = c;
-            }
-
-            i++;
+            insert(root, phoneNumber, name, address);
+            memset(name, 0, sizeof(name));
+            memset(address, 0, sizeof(address));
+            memset(phoneNumber, 0, sizeof(phoneNumber));
             c = fgetc(fptr);
         }
-        
 
-        fclose(fptr);
+        if (c == ' ')
+        {
+            itemFlag++;
+            i = 0;
+            c = fgetc(fptr);
+        }
+
+        if (itemFlag == 0)
+        {
+            name[i] = c;
+        } else if (itemFlag == 1)
+        {
+            address[i] = c;
+        } else if (itemFlag == 2)
+        {
+            phoneNumber[i] = c;
+        }
+
+        i++;
+        c = fgetc(fptr);
     }
+
+    fclose(fptr);
     inorder(root);
     delete(root, 864862149);
     printf("\n");
