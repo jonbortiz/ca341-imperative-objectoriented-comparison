@@ -34,18 +34,18 @@ def delete_contact(root, number):                                      # functio
     if root is None:
         return root
 
-    if root.data > number:
+    if root.data > number:                                             # Recursive call to remove from left and right Node
         root.left = delete_contact(root.left, number)
     elif root.data < number:
         root.right = delete_contact(root.right, number)
-    else: 
+    else:                                                              # checks if there's an instance where there is no left/right child, deletes the Node by returning new root
         if root.right is None:
             return root.left
         
         if root.left is None:
             return root.right
 
-        temp = root.right
+        temp = root.right                                              # if it is an instance where Node has both left and right childs, deleting the minimum node in right subtree
         minimum_node = temp.data
 
         while temp.left:
@@ -54,7 +54,7 @@ def delete_contact(root, number):                                      # functio
         root.right = delete_contact(root.right, number)
     return root
         
-def print_contacts_inorder(root):
+def print_contacts_inorder(root):                                       # function to display contacts in inorder so user can see updated version of phonebook 
     if root:
         print_contacts_inorder(root.left)
         print(root.data, root.name, root.address)
@@ -92,7 +92,7 @@ def main():
         if(command == "search"):                                        # searches contact name and address matching phone number
             number = int(input("Search number: "))
             try:  
-                result = search_contact(root, number)
+                result = search_contact(root, number)                   # function returns name, addressing matching with phone number within Node class
                 print("Name: {} \nAddress: {}".format(result[0], result[1]))
             except AttributeError:
                 print("{} not found in phonebook".format(number))
@@ -104,16 +104,16 @@ def main():
             name = input("Enter Name: ")
             address = input("Enter County: ")
             number = int(input("Enter Number: "))
-            insert(root, name, address, number)
-            phonebook[name] = (address, number)
+            insert(root, name, address, number)                         # Takes user input of new name, address and phone number to insert to binary tree
+            phonebook[name] = (address, number)                         # Also append to our dictionary so we can update our "details.txt" file
             file.write("\n{} {} {}".format(name, address, number))
             file.close()
             print("Contact added to phonebook!")
         
         elif(command == "delete"):
-            number = int(input("Enter Number: "))
+            number = int(input("Enter Number: "))                       # deleting contact based on phone number
             delete_contact(root, number)
-            print_contacts_inorder(root)
+            print_contacts_inorder(root)                                # once number is passed through function and deleted, print function displays updated phonebook 
             print("Contact deleted!")
 
 if __name__ == "__main__":
