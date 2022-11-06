@@ -100,7 +100,7 @@ def main():
         if(command == "print"):
             print_contacts_inorder(root)
         
-        elif(command == "new"):
+        elif(command == "add"):
             name = input("Enter Name: ")
             address = input("Enter County: ")
             number = int(input("Enter Number: "))
